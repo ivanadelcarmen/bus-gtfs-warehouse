@@ -34,20 +34,18 @@ Type casting, removing unwanted characters from text values, uppercasing require
 
 For example, anomalies in **bronze.routes** were found in the column 'route_short_name' which is planned to be separated into the columns bus_line and bus_branch. For both derived columns, adequate CASE expressions are implemented in the silver layer procedure `load_silver.sql` which cover two main cases where the values start either with letters or digits. In this column, values with letters first belong to the minority of the data, as seen running the next SQL query which filters and shows the outlier values:
 
-```
-SELECT route_short_name
-FROM (
-	SELECT
+	SELECT route_short_name
+	FROM (
+		SELECT
 		route_short_name,
 		CASE
 			-- First, remove unnecessary double quotes
 			WHEN TRIM('"' FROM route_short_name) LIKE '[A-Z]%' THEN 1
 			WHEN TRIM('"' FROM route_short_name) LIKE '[0-9]%' THEN 0
 		END AS flag
-	FROM bronze.routes
-) aux
-WHERE flag = 1
-```
+		FROM bronze.routes
+	) aux
+	WHERE flag = 1
 
 Additionally, in **silver.calendar_dates** services are tagged with keywords in the column 'service_type', created according to each service ID in the way described as a result of the analysis in `overview.ipynb` where the following is concluded:
 
