@@ -83,4 +83,4 @@ Both temporary tables are useful for handling different operations at different 
 
 Since the pipeline gathers data from one static source system, loading tasks imply batch processing, parsing files from scratch for each possible update in the dataset and, in turn, the GTFS records. However, the recurrent loading method does not include historization but instead overwrites data (SCD 1) as stored procedures perform full loads by first truncating each table and subsequently inserting data. Running the DDL scripts may also be destructive since tables are dropped if they already exist within the database. 
 
-<div style="text-align:center; font-style: italic">Run the scripts in order and thoughtfully to avoid exceptions or unwanted outputs.</div>
+_Run the scripts in order and thoughtfully to avoid exceptions or unwanted outputs._
