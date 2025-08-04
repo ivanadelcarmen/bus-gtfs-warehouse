@@ -12,6 +12,8 @@ Data is imported from one source system provided as six .txt files with .csv for
 
 Extensive exploratory analysis was documented in `overview.ipynb` using the `polars` Python library before scripting the data warehouse and after encountering exceptions in the process to analyze attributes of data useful for its latter manipulation and categorization. It is recommended to read this file in order to understand the nature of the dataset and the decisions made within the data warehouse.
 
+Check the [data catalog](docs/data_catalog.md) for metadata and details regarding the business-oriented schema of the data warehouse's database `gtfswarehouse`.
+
 ## Architecture
 
 The pipeline follows the Medallion architecture, loading tables in each stage schema through DDL scripts, stored procedures, and scalar functions to compute exceptional columns. The full data flow is as follows:
