@@ -147,4 +147,14 @@ WHERE
     agency_id IS NULL OR
     agency_name IS NULL OR
     agency_url IS NULL OR
-    agency_timezone IS NULL;
+    timezone_country IS NULL OR
+    timezone_city IS NULL;
+GO
+
+-- Ensure timezone_country and timezone_city have correct values, taking agency_id 10 as test case
+-- EXPECT: Argentina | Buenos Aires
+SELECT
+    timezone_country,
+    timezone_city
+FROM silver.agency
+WHERE agency_id = 10;
