@@ -27,14 +27,15 @@ Provides agency details such as names and URLs.
 
 Provides route properties, descriptions, and bus details.
 
-| Column Name       | Data Type   | Description                                                                                          |
-|-------------------|-------------|------------------------------------------------------------------------------------------------------|
-| route_key         | INT         | Surrogate key uniquely identifying each route in a stepwise and clear manner.                        |
-| route_id          | INT         | Unique numerical identifier assigned originally to each route.                                       |
-| agency_id         | INT         | Numerical identifier of each route's agency. It is considered as a prime property of routes.         |
-| bus_line          | NVARCHAR(5) | Numerical string name of the bus line to which a route belongs. Only 6 unique values are alphabetic. |
-| bus_branch        | NVARCHAR(5) | Alphanumerical category related to the specific route of a bus line.                                 |
-| route_description | TEXT        | A brief description of a route's branch, terminals, or endpoint locations.
+| Column Name       | Data Type    | Description                                                                                                                |
+|-------------------|--------------|----------------------------------------------------------------------------------------------------------------------------|
+| route_key         | INT          | Surrogate key uniquely identifying each route in a stepwise and clear manner.                                              |
+| route_id          | INT          | Unique numerical identifier assigned originally to each route.                                                             |
+| agency_id         | INT          | Numerical identifier of each route's agency. It is considered as a prime property of routes.                               |
+| bus_line          | NVARCHAR(5)  | Numerical string name of the bus line to which a route belongs. Only 6 unique values are alphabetic.                       |
+| bus_branch        | NVARCHAR(5)  | Alphanumerical category related to the specific route of a bus line.                                                       |
+| route_description | TEXT         | A brief description of a route's branch, terminals, or endpoint locations.                                                 |
+| route_scope       | NVARCHAR(20) | The region scope of each route with 'Capital' being Buenos Aires capital city, 'Province' being Buenos Aires Province, and 'Municipality' being a single municipality within Buenos Aires Province.
 
 #
 
