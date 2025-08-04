@@ -32,7 +32,7 @@ The pipeline completely appeals to a full extraction type. In the bronze layer, 
 
 #### SILVER
 
-Type casting, removing unwanted characters from text values, uppercasing required fields, deriving columns, canonicalization (e.g. replacing 'ENIE' with the letter 'Ñ'), and outlier detection are the data cleansing processes performed in this silver layer, the latter being the most issued task in this stage. 
+Type casting, removing unwanted characters from text values, uppercasing required fields, deriving and splitting columns, canonicalization (e.g. replacing 'ENIE' with the letter 'Ñ'), and outlier detection are the data cleansing processes performed in this silver layer, the latter being the most issued task in this stage. 
 
 For example, anomalies in **bronze.routes** were found in the column 'route_short_name' which is planned to be separated into the columns bus_line and bus_branch. For both derived columns, adequate CASE expressions are implemented in the silver layer procedure `load_silver.sql` which cover two main cases where the values start either with letters or digits. In this column, values with letters first belong to the minority of the data, as seen running the next SQL query which filters and shows the outlier values:
 
