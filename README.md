@@ -2,13 +2,13 @@
 
 ## Abstract
 
-The following project develops a modern data warehouse using T-SQL and SQL through ETL tasks which handle hundreds of thousands of rows associated with the static GTFS (General Transit Feed Specification) data of [Buenos Aires buses](https://data.buenosaires.gob.ar/dataset/colectivos-gtfs), including agency information, stop times, service days, and many more attributes which are leveraged to enable analytical reporting with insights regarding:
+The following project develops a modern data warehouse using T-SQL through ETL tasks which handle hundreds of thousands of rows associated with the static GTFS (General Transit Feed Specification) data of [Buenos Aires buses](https://data.buenosaires.gob.ar/dataset/colectivos-gtfs), including agency information, stop times, service days, and many more attributes which are leveraged to enable analytical reporting with insights regarding:
 
 * Relationship between route attributes
 * Trends according to service days and bus lines
 * Statistics grouped by agencies
 
-Data is imported from one source system provided as six `.txt` files with `.csv` format, excluding `stops.txt` which will not be used. Prior to analysis, data quality issues are cleansed and resolved, and additional columns are included in order to facilitate the connection between data models and their visualization. Sufficient data normalization standards are also met.
+Data is imported from one source system provided as six .txt files with .csv format, excluding `stops.txt` which will not be used. Prior to analysis, data quality issues are cleansed and resolved, and additional columns are included in order to facilitate the connection between data models and their visualization. Sufficient data normalization standards are also met.
 
 Extensive exploratory analysis was documented in `overview.ipynb` using the `polars` Python library before scripting the data warehouse and after encountering exceptions in the process to analyze attributes of data useful for its latter manipulation and categorization. It is recommended to read this file in order to understand the nature of the dataset and the decisions made within the data warehouse.
 
@@ -22,7 +22,7 @@ The pipeline follows the Medallion architecture, loading tables in each stage sc
 
 ### Extraction
 
-The pipeline completely appeals to a full extraction type. In the bronze layer, data is pulled from SQL Server using the procedure from `load_bronze.sql` and each `.txt` file is parsed into the data warehouse using specific settings for row lookup, delimiters, and also encoding since the dataset contains characters found in Spanish ortography. For the next layers, data is extracted from the previous stages through database querying.
+The pipeline completely appeals to a full extraction type. In the bronze layer, data is pulled from SQL Server using the procedure from `load_bronze.sql` and each .txt file is parsed into the data warehouse using specific settings for row lookup, delimiters, and also encoding since the dataset contains characters found in Spanish ortography. For the next layers, data is extracted from the previous stages through database querying.
 
 #
 
