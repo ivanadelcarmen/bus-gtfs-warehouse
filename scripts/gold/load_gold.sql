@@ -100,7 +100,8 @@ BEGIN
 			agency_id,
 			agency_name,
 			agency_url,
-			agency_timezone
+			timezone_country,
+			timezone_city
 		)
 		SELECT
 			ROW_NUMBER() OVER (ORDER BY agency_id) AS agency_key,

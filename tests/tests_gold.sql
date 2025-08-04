@@ -22,7 +22,8 @@ WHERE
     agency_id IS NULL OR
     agency_name IS NULL OR
     agency_url IS NULL OR
-    agency_timezone IS NULL;
+    timezone_country IS NULL OR
+    timezone_city IS NULL;
 GO
 
 -- Ensure all the agencies listed in silver.agency are covered

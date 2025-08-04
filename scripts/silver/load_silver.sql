@@ -180,18 +180,48 @@ BEGIN
 		TRUNCATE TABLE silver.agency;
 
 		PRINT '>> Populating table: silver.agency';
+		WITH filtered_timezones_cte AS (
+			SELECT
+				*,
+				-- Only the country and region info. is taken
+				SUBSTRING(
+					agency_timezone,
+					CHARINDEX('/', agency_timezone) + 1,
+					LEN(agency_timezone)
+				) AS timezone_region
+			FROM (
+				SELECT 
+					agency_id,
+					TRIM('"' FROM agency_name) AS agency_name,
+					TRIM('"' FROM agency_url) AS agency_url,
+					TRIM('"' FROM agency_timezone) AS agency_timezone
+				FROM bronze.agency
+			) aux
+		)
 		INSERT INTO silver.agency (
 			agency_id,
 			agency_name,
 			agency_url,
-			agency_timezone
+			timezone_country,
+			timezone_city
 		)
 		SELECT 
 			agency_id,
-			TRIM('"' FROM agency_name) AS agency_name,
-			TRIM('"' FROM agency_url) AS agency_url,
-			TRIM('"' FROM agency_timezone) AS agency_timezone
-		FROM bronze.agency
+			agency_name,
+			agency_url,
+			SUBSTRING(
+				timezone_region,
+				1,
+				CHARINDEX('/', timezone_region) - 1
+			) AS timezone_country,
+			REPLACE(
+				SUBSTRING(
+					timezone_region,
+					CHARINDEX('/', timezone_region) + 1,
+					LEN(timezone_region)
+				), '_', ' ' -- Additionally replace underscores with spaces
+			) AS timezone_city
+		FROM filtered_timezones_cte
 
 		SET @end_time = GETDATE();
 		PRINT '>> LOAD DURATION: ' + CAST(DATEDIFF(second, @start_time, @end_time) AS NVARCHAR) + ' seconds';

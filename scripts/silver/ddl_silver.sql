@@ -114,5 +114,6 @@ CREATE TABLE silver.agency(
 	agency_id INT,
 	agency_name NVARCHAR(100),
 	agency_url NVARCHAR(100),
-	agency_timezone NVARCHAR(50),
+	timezone_country NVARCHAR(30),
+	timezone_city NVARCHAR(30)
 );
