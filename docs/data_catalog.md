@@ -54,7 +54,7 @@ Provides ordered coordinates to visualize the path of routes given an ambivalent
 
 ### gold.fact_services
 
-Provides simple metric information on the amount of trips or buses per day belonging to a route, given both directions and a specific service type.
+Provides simple metric information on the amount of trips or vehicles per day belonging to a route, given both directions and a specific service type.
 
 | Column Name   | Data Type    | Description                                                                                                |
 |---------------|--------------|------------------------------------------------------------------------------------------------------------|
