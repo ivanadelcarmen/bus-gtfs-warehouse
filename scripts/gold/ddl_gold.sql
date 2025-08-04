@@ -37,7 +37,8 @@ CREATE TABLE gold.dim_routes (
 	agency_id INT,
 	bus_line NVARCHAR(5),
 	bus_branch NVARCHAR(5),
-	route_description TEXT
+	route_description TEXT,
+	route_scope NVARCHAR(20)
 );
 GO
 

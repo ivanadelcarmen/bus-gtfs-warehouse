@@ -65,7 +65,7 @@ CREATE TABLE silver.routes(
 	bus_branch NVARCHAR(5), -- Derived column from route_short_name
 	route_long_name NVARCHAR(20),
 	route_desc TEXT,
-	route_type INT
+	route_scope NVARCHAR(20)
 );
 GO
 

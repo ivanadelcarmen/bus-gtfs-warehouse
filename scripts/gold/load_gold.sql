@@ -124,7 +124,8 @@ BEGIN
 			agency_id,
 			bus_line,
 			bus_branch,
-			route_description
+			route_description,
+			route_scope
 		)
 		SELECT
 			ROW_NUMBER() OVER (ORDER BY route_id) AS route_key,
@@ -132,7 +133,8 @@ BEGIN
 			agency_id,
 			bus_line,
 			bus_branch,
-			route_desc AS route_description
+			route_desc AS route_description,
+			route_scope
 		FROM silver.routes;
 
 		SET @end_time = GETDATE();

@@ -93,6 +93,41 @@ BEGIN
 		TRUNCATE TABLE silver.routes;
 
 		PRINT '>> Populating table: silver.routes';
+		WITH routes_and_buses_cte AS (
+			SELECT
+				route_id,
+				agency_id,
+				CASE
+					WHEN route_short_name NOT LIKE '%[0-9]%' OR route_short_name NOT LIKE '%[A-Z]%' -- Get full string
+						THEN route_short_name
+					WHEN route_short_name LIKE '[0-9]%'
+						THEN LEFT(route_short_name, PATINDEX('%[A-Z]%', route_short_name)-1) -- Get digits before letters
+					WHEN route_short_name LIKE '[A-Z]%'
+						-- Additionally replace the 'OE' value with 'OESTE'
+						THEN REPLACE(
+						LEFT(route_short_name, PATINDEX('%[0-9]%', route_short_name)-1), -- Get letters before digits
+						'OE', 'OESTE')
+				END AS bus_line,
+				CASE
+					WHEN route_short_name LIKE '[0-9]%'
+						-- Additionally replace the 'ENIE' value with 'Ñ'
+						THEN REPLACE(
+						RIGHT(route_short_name, LEN(route_short_name)-(PATINDEX('%[A-Z]%', route_short_name)-1)), -- Get last letters
+						'ENIE', 'Ñ')
+					ELSE RIGHT(route_short_name, LEN(route_short_name)-(PATINDEX('%[0-9]%', route_short_name)-1)) -- Get last digits or line in the lack thereof
+				END AS bus_branch,
+				route_long_name,
+				route_desc
+			FROM (
+				SELECT
+					CAST(TRIM('"' FROM route_id) AS INT) AS route_id,
+					CAST(TRIM('"' FROM agency_id) AS INT) AS agency_id,
+					UPPER(TRIM('"' FROM route_short_name)) AS route_short_name,
+					UPPER(TRIM('"' FROM route_long_name)) AS route_long_name,
+					UPPER(TRIM('"' FROM route_desc)) AS route_desc
+				FROM bronze.routes
+			) aux
+		)
 		INSERT INTO silver.routes (
 			route_id,
 			agency_id,
@@ -100,43 +135,16 @@ BEGIN
 			bus_branch,
 			route_long_name,
 			route_desc,
-			route_type
+			route_scope
 		)
 		SELECT
-			route_id,
-			agency_id,
+			*,
 			CASE
-				WHEN route_short_name NOT LIKE '%[0-9]%' OR route_short_name NOT LIKE '%[A-Z]%' -- Get full string
-					THEN route_short_name
-				WHEN route_short_name LIKE '[0-9]%'
-					THEN LEFT(route_short_name, PATINDEX('%[A-Z]%', route_short_name)-1) -- Get digits before letters
-				WHEN route_short_name LIKE '[A-Z]%'
-					-- Additionally replace the 'OE' value with 'OESTE'
-					THEN REPLACE(
-					LEFT(route_short_name, PATINDEX('%[0-9]%', route_short_name)-1), -- Get letters before digits
-					'OE', 'OESTE')
-			END AS bus_line,
-			CASE
-				WHEN route_short_name LIKE '[0-9]%'
-					-- Additionally replace the 'ENIE' value with 'Ñ'
-					THEN REPLACE(
-					RIGHT(route_short_name, LEN(route_short_name)-(PATINDEX('%[A-Z]%', route_short_name)-1)), -- Get last letters
-					'ENIE', 'Ñ')
-				ELSE RIGHT(route_short_name, LEN(route_short_name)-(PATINDEX('%[0-9]%', route_short_name)-1)) -- Get last digits or line in the lack thereof
-			END AS bus_branch,
-			route_long_name,
-			route_desc,
-			route_type
-		FROM (
-			SELECT
-				CAST(TRIM('"' FROM route_id) AS INT) AS route_id,
-				CAST(TRIM('"' FROM agency_id) AS INT) AS agency_id,
-				UPPER(TRIM('"' FROM route_short_name)) AS route_short_name,
-				UPPER(TRIM('"' FROM route_long_name)) AS route_long_name,
-				UPPER(TRIM('"' FROM route_desc)) AS route_desc, 
-				route_type
-			FROM bronze.routes
-		) aux
+				WHEN ISNUMERIC(bus_line) = 1 AND CAST(bus_line AS INT) < 200 THEN 'Capital'
+				WHEN ISNUMERIC(bus_line) = 1 AND CAST(bus_line AS INT) < 500 THEN 'Province'
+				ELSE 'Municipality'
+			END AS route_scope
+		FROM routes_and_buses_cte
 
 		SET @end_time = GETDATE();
 		PRINT '>> LOAD DURATION: ' + CAST(DATEDIFF(second, @start_time, @end_time) AS NVARCHAR) + ' seconds';

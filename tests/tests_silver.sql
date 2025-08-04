@@ -76,7 +76,7 @@ WHERE
     bus_branch IS NULL OR
     route_long_name IS NULL OR
     route_desc IS NULL OR
-    route_type IS NULL;
+    route_scope IS NULL;
 GO
 
 -- Ensure bus_line does not contain empty strings or 'N/A' values
@@ -84,6 +84,19 @@ GO
 SELECT bus_line
 FROM silver.routes
 WHERE bus_line = '' OR bus_line = 'N/A';
+GO
+
+-- Ensure bus lines have the correct route_scope value attributed with four different test cases
+-- EXPECT: 130 - Capital | 243 - Province | 522 - Municipality | OESTE - Municipality
+SELECT
+    DISTINCT bus_line, route_scope
+FROM silver.routes
+WHERE 
+    bus_line = 'OESTE' OR
+    bus_line = '130' OR
+    bus_line = '243' OR
+    bus_line = '522'
+ORDER BY bus_line;
 GO
 
 /*

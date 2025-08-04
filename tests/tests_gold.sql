@@ -46,7 +46,8 @@ WHERE
     route_id IS NULL OR
     bus_line IS NULL OR
 	bus_branch IS NULL OR
-    route_description IS NULL;
+    route_description IS NULL OR
+    route_scope IS NULL;
 GO
 
 -- Ensure all the routes listed in silver.routes are covered
