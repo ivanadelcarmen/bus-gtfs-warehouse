@@ -12,13 +12,14 @@ The schema, namely a galaxy schema, is composed by two fact tables with average 
 
 Provides agency details such as names and URLs.
 
-| Column Name     | Data Type     | Description                                                                    |
-|-----------------|---------------|--------------------------------------------------------------------------------|
-| agency_key      | INT           | Surrogate key uniquely identifying each agency in a stepwise and clear manner. |
-| agency_id       | INT           | Unique numerical identifier assigned originally to each agency.                |
-| agency_name     | NVARCHAR(100) | Alphabetic identifier representing the agency, used for referencing.           |
-| agency_url      | NVARCHAR(100) | The URL provided to find further information on the agency.                    |
-| agency_timezone | NVARCHAR(50)  | The timezone related to the agency's location.                                 
+| Column Name      | Data Type     | Description                                                                    |
+|------------------|---------------|--------------------------------------------------------------------------------|
+| agency_key       | INT           | Surrogate key uniquely identifying each agency in a stepwise and clear manner. |
+| agency_id        | INT           | Unique numerical identifier assigned originally to each agency.                |
+| agency_name      | NVARCHAR(100) | Alphabetic identifier representing the agency, used for referencing.           |
+| agency_url       | NVARCHAR(100) | The URL provided to find further information on the agency.                    |
+| timezone_country | NVARCHAR(30)  | The country related to the agency's timezone.                                  |
+| timezone_city    | NVARCHAR(30)  | The city from the country related to the agency's timezone.                        
 
 #
 
