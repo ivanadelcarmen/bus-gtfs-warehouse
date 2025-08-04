@@ -131,3 +131,20 @@ WHERE
     stop_id IS NULL OR
     stop_sequence IS NULL OR
     shape_dist_traveled IS NULL;
+GO
+
+/*
+===================================
+Quality checks for 'agency'
+===================================
+*/
+
+-- Ensure there are no nulls in the table
+-- EXPECT: No results
+SELECT *
+FROM silver.agency
+WHERE
+    agency_id IS NULL OR
+    agency_name IS NULL OR
+    agency_url IS NULL OR
+    agency_timezone IS NULL;
