@@ -1,5 +1,7 @@
 # **Data warehouse with historical bus GTFS data using SQL Server and exploratory analysis via Jupyter Notebook**
 
+_**Technology stack**: SQL Server Express, Jupyter Notebook, Python 3.12_
+
 ## Abstract
 
 The following project develops a modern data warehouse using T-SQL through ETL tasks which handle hundreds of thousands of rows associated with the static GTFS (General Transit Feed Specification) data of [Buenos Aires buses](https://data.buenosaires.gob.ar/dataset/colectivos-gtfs), including agency information, stop times, service days, and many more attributes which are leveraged to enable analytical reporting with insights regarding:
@@ -36,18 +38,20 @@ Type casting, removing unwanted characters from text values, uppercasing require
 
 For example, anomalies in **bronze.routes** were found in the column 'route_short_name' which is planned to be separated into the columns 'bus_line' and 'bus_branch', with 'bus_line' being used to determine the region scope of routes with the additional column 'route_scope'. For both derived columns, adequate CASE expressions are implemented in the silver layer procedure `load_silver.sql` which cover two main cases where the values start either with letters or digits. In this column, values with letters first belong to the minority of the data, as seen running the next SQL query which filters and shows the outlier values:
 
-	SELECT route_short_name
-	FROM (
-		SELECT
-		route_short_name,
-		CASE
-			-- First, remove unnecessary double quotes
-			WHEN TRIM('"' FROM route_short_name) LIKE '[A-Z]%' THEN 1
-			WHEN TRIM('"' FROM route_short_name) LIKE '[0-9]%' THEN 0
-		END AS flag
-		FROM bronze.routes
-	) aux
-	WHERE flag = 1
+``` sql
+SELECT route_short_name
+FROM (
+	SELECT
+	route_short_name,
+	CASE
+		-- First, remove unnecessary double quotes
+		WHEN TRIM('"' FROM route_short_name) LIKE '[A-Z]%' THEN 1
+		WHEN TRIM('"' FROM route_short_name) LIKE '[0-9]%' THEN 0
+	END AS flag
+	FROM bronze.routes
+) aux
+WHERE flag = 1
+```
 
 Additionally, in **silver.calendar_dates** services are tagged with keywords in the column 'service_type', created according to each service ID in the way described as a result of the analysis in `overview.ipynb` where the following is concluded:
 
@@ -85,4 +89,51 @@ Both temporary tables are useful for handling different operations at different 
 
 Since the pipeline gathers data from one static source system, loading tasks imply batch processing, parsing files from scratch for each possible update in the dataset and, in turn, the GTFS records. However, the recurrent loading method does not include historization but instead overwrites data (SCD 1) as stored procedures perform full loads by first truncating each table and subsequently inserting data. Running the DDL scripts may also be destructive since tables are dropped if they already exist within the database. 
 
-_Run the scripts in order and thoughtfully to avoid exceptions or unwanted outputs._
+Run the scripts in order and thoughtfully to avoid exceptions or unwanted outputs, within the `gtfswarehouse` database:
+
+1. DDL scripts
+
+2. Store procedures
+	
+	* For the bronze layer, add each file's path before storing the procedure
+
+3. Execute stored procedures as in the following example:
+
+	``` sql
+	EXEC bronze.load_bronze;
+	EXEC silver.load_silver;
+	EXEC gold.load_gold
+	```
+
+#
+
+### Testing
+
+SQL scripts are included in the `tests/` directory by which the tables' quality can be audited, using individual test cases for each transformation. Select a test case for the desired table and compare the results of the query with the 'EXPECT' comment line.
+
+## Repository
+
+```
+etl-gtfs-warehouse/
+│
+├── docs/                   # Files related to the project's documentation
+│   ├── data_catalog.md     # Information about the gold tables' metadata and structure
+│   ├── data_flow.png       # Draw.io diagram for visualizing the relation between tables across stages
+│   └── data_model.png      # Draw.io diagram for modeling the gold layer's schema
+│
+├── scripts/                # SQL scripts for building the data warehouse
+│   ├── bronze/				# DDL and procedure scripts for the bronze layer 
+│   ├── gold/               # DDL and procedure scripts for the gold layer 
+│   ├── silver/             # DDL and procedure scripts for the silver layer 
+│   └── init_database.sql   # Script for initializing the database and its schemas
+│
+├── source/                 # Source .txt files from where the GTFS data is extracted
+│
+├── tests/                  # SQL scripts for checking the quality of the silver and gold tables
+│
+├── overview.ipynb          # Jupyter Notebook containing exploratory analysis of the source data
+├── README.md               # Project overview, instructions, and architecture details
+├── LICENSE                 # License information for the repository
+├── .gitattributes			# Attributes and file-handling options to be read by Git
+└── .gitignore              # Directories to be ignored by Git
+```
